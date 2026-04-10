@@ -1,44 +1,47 @@
-import { useState } from "react";
-import SearchBar from "./components/general/SearchBar";
-import Input from "./components/general/Input";
-import SelectInput from "./components/general/SelectInput";
-import Button from "./components/general/Button";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import "./App.css";
+import Authentication from "./routes/auth/Authentication";
+import Dashboard from "./routes/dashboard/Dashboard";
 
 function App() {
-  const [title, setTitle] = useState("");
-  const [username, setUsername] = useState("");
-  const [sort, setSort] = useState("default");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userUsername, setUserUsername] = useState("");
 
-  return (
-    <div className="App">
-      <SearchBar title={title} setTitle={setTitle} />
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
 
-      <br /><br />
+    if (!accessToken) return;
 
-      <Input
-        label="Username"
-        type="text"
-        value={username}
-        setValue={setUsername}
-        inputAttributes={{ placeholder: "Enter username" }}
-      />
+    axios
+      .post(
+        "http://localhost:8000/api/auth/",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then((response) => {
+        setIsLoggedIn(true);
+        setUserUsername(response.data.username);
+      })
+      .catch((error) => {
+        console.error("Auth check failed:", error);
+      });
+  }, []);
 
-      <br /><br />
-
-      <SelectInput
-        label="Sort"
-        options={["default", "latest", "oldest", "highestrated", "lowestrated"]}
-        value={sort}
-        setValue={setSort}
-      />
-
-      <br /><br />
-
-      <Button
-        label="Click me"
-        onClick={() => console.log("Button clicked")}
-      />
-    </div>
+  return isLoggedIn ? (
+    <Dashboard
+      userUsername={userUsername}
+      setIsLoggedIn={setIsLoggedIn}
+    />
+  ) : (
+    <Authentication
+      setIsLoggedIn={setIsLoggedIn}
+      setUserUsername={setUserUsername}
+    />
   );
 }
 
