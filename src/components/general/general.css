@@ -1,0 +1,12 @@
+.general-input,
+.general-select,
+.general-button,
+.general-search {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.general-button {
+  cursor: pointer;
+}
