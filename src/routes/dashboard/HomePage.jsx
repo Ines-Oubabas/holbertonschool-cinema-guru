@@ -14,15 +14,22 @@ function HomePage() {
   const [title, setTitle] = useState("");
   const [page, setPage] = useState(1);
 
+  const authConfig = {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    },
+  };
+
   const loadMovies = async (pageNumber) => {
     try {
       const response = await axios.get(
         "http://localhost:8000/api/titles/advancedsearch",
         {
+          ...authConfig,
           params: {
             minYear,
             maxYear,
-            genres,
+            genre: genres.join(","),
             title,
             sort,
             page: pageNumber,
@@ -31,9 +38,9 @@ function HomePage() {
       );
 
       if (pageNumber === 1) {
-        setMovies(response.data || []);
+        setMovies(response.data.titles || []);
       } else {
-        setMovies((prev) => [...prev, ...(response.data || [])]);
+        setMovies((prev) => [...prev, ...(response.data.titles || [])]);
       }
     } catch (error) {
       console.error("Advanced search request failed:", error);

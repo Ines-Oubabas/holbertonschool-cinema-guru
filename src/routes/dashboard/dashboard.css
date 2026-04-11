@@ -4,6 +4,7 @@
 
 .dashboard-content {
   display: flex;
+  align-items: flex-start;
 }
 
 .dashboard-main {

@@ -1,30 +1,39 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./navigation.css";
 import Activity from "../Activity";
 
 function SideBar() {
-  const [selected, setSelected] = useState("home");
-  const [small, setSmall] = useState(true);
   const [activities, setActivities] = useState([]);
-  const [showActivities, setShowActivities] = useState(false);
-
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const selected = location.pathname.includes("/favorites")
+    ? "favorites"
+    : location.pathname.includes("/watchlater")
+    ? "watchlater"
+    : "home";
 
   const setPage = (pageName) => {
-    setSelected(pageName);
-
     if (pageName === "home") navigate("/home");
     if (pageName === "favorites") navigate("/favorites");
     if (pageName === "watchlater") navigate("/watchlater");
   };
 
   useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!accessToken) return;
+
     axios
-      .get("http://localhost:8000/api/activity")
+      .get("http://localhost:8000/api/activity/", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
       .then((response) => {
-        setActivities(response.data);
+        setActivities(response.data || []);
       })
       .catch((error) => {
         console.error("Activity request failed:", error);
@@ -40,12 +49,14 @@ function SideBar() {
         >
           Home
         </li>
+
         <li
           className={selected === "favorites" ? "active" : ""}
           onClick={() => setPage("favorites")}
         >
           Favorites
         </li>
+
         <li
           className={selected === "watchlater" ? "active" : ""}
           onClick={() => setPage("watchlater")}

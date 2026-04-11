@@ -7,8 +7,16 @@ function Favorites() {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!accessToken) return;
+
     axios
-      .get("http://localhost:8000/api/titles/favorite/")
+      .get("http://localhost:8000/api/titles/favorite/", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
       .then((response) => {
         setMovies(response.data || []);
       })

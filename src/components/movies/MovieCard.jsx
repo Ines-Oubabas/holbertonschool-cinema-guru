@@ -8,25 +8,33 @@ function MovieCard({ movie }) {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isWatchLater, setIsWatchLater] = useState(false);
 
+  const authConfig = {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    },
+  };
+
   useEffect(() => {
-    Promise.all([
-      axios.get("http://localhost:8000/api/titles/favorite/"),
-      axios.get("http://localhost:8000/api/titles/watchlater/"),
-    ])
-      .then(([favoriteResponse, watchLaterResponse]) => {
+    const fetchMovieStatus = async () => {
+      try {
+        const [favoriteResponse, watchLaterResponse] = await Promise.all([
+          axios.get("http://localhost:8000/api/titles/favorite/", authConfig),
+          axios.get("http://localhost:8000/api/titles/watchLater/", authConfig),
+        ]);
+
         const favorites = favoriteResponse.data || [];
         const watchLater = watchLaterResponse.data || [];
 
-        setIsFavorite(
-          favorites.some((item) => item.imdbId === movie.imdbId)
-        );
+        setIsFavorite(favorites.some((item) => item.imdbId === movie.imdbId));
         setIsWatchLater(
           watchLater.some((item) => item.imdbId === movie.imdbId)
         );
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Movie status request failed:", error);
-      });
+      }
+    };
+
+    fetchMovieStatus();
   }, [movie.imdbId]);
 
   const handleClick = async (type) => {
@@ -34,12 +42,15 @@ function MovieCard({ movie }) {
       if (type === "favorite") {
         if (isFavorite) {
           await axios.delete(
-            `http://localhost:8000/api/titles/favorite/${movie.imdbId}`
+            `http://localhost:8000/api/titles/favorite/${movie.imdbId}`,
+            authConfig
           );
           setIsFavorite(false);
         } else {
           await axios.post(
-            `http://localhost:8000/api/titles/favorite/${movie.imdbId}`
+            `http://localhost:8000/api/titles/favorite/${movie.imdbId}`,
+            {},
+            authConfig
           );
           setIsFavorite(true);
         }
@@ -48,12 +59,15 @@ function MovieCard({ movie }) {
       if (type === "watchlater") {
         if (isWatchLater) {
           await axios.delete(
-            `http://localhost:8000/api/titles/watchlater/${movie.imdbId}`
+            `http://localhost:8000/api/titles/watchlater/${movie.imdbId}`,
+            authConfig
           );
           setIsWatchLater(false);
         } else {
           await axios.post(
-            `http://localhost:8000/api/titles/watchlater/${movie.imdbId}`
+            `http://localhost:8000/api/titles/watchlater/${movie.imdbId}`,
+            {},
+            authConfig
           );
           setIsWatchLater(true);
         }
@@ -68,15 +82,23 @@ function MovieCard({ movie }) {
       <div className="movie-card-icons">
         <FontAwesomeIcon
           icon={faHeart}
-          className="movie-card-icon"
+          className={`movie-card-icon ${isFavorite ? "active" : ""}`}
           onClick={() => handleClick("favorite")}
         />
         <FontAwesomeIcon
           icon={faClock}
-          className="movie-card-icon"
+          className={`movie-card-icon ${isWatchLater ? "active" : ""}`}
           onClick={() => handleClick("watchlater")}
         />
       </div>
+
+      {movie.imageurls?.[0] && (
+        <img
+          src={movie.imageurls[0]}
+          alt={movie.title || "Movie poster"}
+          className="movie-card-image"
+        />
+      )}
 
       <h3>{movie.title || "Untitled"}</h3>
       <p>{movie.synopsis || "No synopsis available."}</p>
