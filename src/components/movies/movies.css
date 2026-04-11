@@ -1,0 +1,87 @@
+.movies-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+  color: white;
+}
+
+.movies-filter-top {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.movies-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+}
+
+.movie-tag {
+  list-style: none;
+  padding: 6px 12px;
+  border: 1px solid #d90429;
+  border-radius: 999px;
+  color: white;
+  cursor: pointer;
+}
+
+.movie-tag.selected {
+  background: #d90429;
+}
+
+.movies-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.movie-card {
+  list-style: none;
+  width: 260px;
+  background: #151823;
+  color: white;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.movie-card h3 {
+  margin-top: 12px;
+  margin-bottom: 10px;
+}
+
+.movie-card p {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.movie-card-icons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.movie-card-icon {
+  cursor: pointer;
+}
+
+.movie-card-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  margin-top: 12px;
+}
+
+.movie-card-genres li {
+  list-style: none;
+  background: #d90429;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}

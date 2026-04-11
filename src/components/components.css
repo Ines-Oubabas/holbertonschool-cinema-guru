@@ -1,0 +1,11 @@
+.activity-item {
+  list-style: none;
+  margin-bottom: 12px;
+  color: white;
+  font-size: 14px;
+}
+
+.activity-item p {
+  margin: 0;
+  line-height: 1.3;
+}

@@ -1,0 +1,18 @@
+.dashboard-page {
+  min-height: 100vh;
+}
+
+.dashboard-content {
+  display: flex;
+}
+
+.dashboard-main {
+  flex: 1;
+  padding: 20px;
+  color: white;
+}
+
+.dashboard-main h1 {
+  color: white;
+  margin-bottom: 20px;
+}
